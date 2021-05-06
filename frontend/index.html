@@ -1,0 +1,90 @@
+<html>
+    <head>
+        <title>
+            Google Docs Clone
+        </title>
+        <style>
+            * {
+                padding: 0;
+                margin: 0;
+            }
+
+            body {
+                padding: 48px;
+                color: #FEFEFE;
+                background-color: #202020;
+                /* background-color: #202020; */
+            }
+
+            .join{
+                display: flex;
+                margin-top: 24px;
+            }
+
+            .text {
+                display: flex;
+                margin-top: 24px;
+            }
+
+            .text > ul {
+                border: 1px solid #FEFEFE;
+                flex: 1;
+                height: 80vh;
+            }
+
+            textarea {
+                flex: 5;
+                height: 80vh;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Hello World !!</h1>
+        <div class="join">
+            <input id="username" required />
+            <button id="join__button">Join</button>
+        </div>
+        <div class="text">
+            <textarea></textarea>
+            <ul>
+                <h3>Users connected</h3>
+                <span id="num"></span>
+            </ul>
+        </div>
+        <script src="https://cdn.socket.io/3.1.3/socket.io.min.js" integrity="sha384-cPwlPLvBTa3sKAgddT6krw0cJat7egBga3DJepJyrLl4Q9/5WLra3rrnMcyTyOnh" crossorigin="anonymous"></script>
+        <script>
+            let socket = null;
+            socket = io.connect('192.168.1.12:3000');
+
+            socket.on('textChanged', (data) => {
+                document.querySelector('textarea').value = data;
+            });
+
+            socket.on('newConnection', (data) => {
+                document.querySelector('#num').innerHTML = data;
+            });
+
+            socket.on('discon', (data) => {
+                document.querySelector('#num').innerHTML = data;
+            });
+
+            socket.on('initialData', (data) => {
+                document.querySelector('textarea').value = data;
+            });
+            
+            const join = () => {
+                const username = document.querySelector('#username').value;
+                console.log(socket);
+            }
+
+            const edit = () => {
+                const data = document.querySelector('textarea').value;
+                socket.emit('edit', data);
+            }
+
+            document.querySelector('#join__button').addEventListener('click', join);
+            document.querySelector('textarea').addEventListener('keyup', edit);
+
+        </script>
+    </body>
+</html>
