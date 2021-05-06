@@ -11,6 +11,7 @@ const io = new Server(server, {
 let initialData = '';
 
 io.on('connection', (socket) => {
+    console.log(socket.handshake.query.username);
     console.log('New connection established');
     io.emit('newConnection', socket.nsp.sockets.size);
     socket.emit('initialData', initialData);

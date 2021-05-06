@@ -45,36 +45,41 @@
             <button id="join__button">Join</button>
         </div>
         <div class="text">
-            <textarea></textarea>
+            <textarea disabled></textarea>
             <ul>
-                <h3>Users connected</h3>
-                <span id="num"></span>
+                <h3 id="disconmsg">Disconnected</h3>
+                <h3 id="numusers" hidden>
+                    Users connected : <span id="num"></span>
+                </h3>
             </ul>
         </div>
         <script src="https://cdn.socket.io/3.1.3/socket.io.min.js" integrity="sha384-cPwlPLvBTa3sKAgddT6krw0cJat7egBga3DJepJyrLl4Q9/5WLra3rrnMcyTyOnh" crossorigin="anonymous"></script>
         <script>
             let socket = null;
-            socket = io.connect('192.168.1.12:3000');
-
-            socket.on('textChanged', (data) => {
-                document.querySelector('textarea').value = data;
-            });
-
-            socket.on('newConnection', (data) => {
-                document.querySelector('#num').innerHTML = data;
-            });
-
-            socket.on('discon', (data) => {
-                document.querySelector('#num').innerHTML = data;
-            });
-
-            socket.on('initialData', (data) => {
-                document.querySelector('textarea').value = data;
-            });
             
             const join = () => {
                 const username = document.querySelector('#username').value;
-                console.log(socket);
+                socket = io.connect('192.168.1.12:3000', {query: `username=${username}`});
+                document.querySelector('textarea').disabled = false;
+                document.querySelector('button').disabled = true;
+                document.querySelector('#disconmsg').hidden = true;
+                document.querySelector('#numusers').hidden = false;
+
+                socket.on('textChanged', (data) => {
+                    document.querySelector('textarea').value = data;
+                });
+                
+                socket.on('newConnection', (data) => {
+                    document.querySelector('#num').innerHTML = data;
+                });
+                
+                socket.on('discon', (data) => {
+                    document.querySelector('#num').innerHTML = data;
+                });
+                
+                socket.on('initialData', (data) => {
+                    document.querySelector('textarea').value = data;
+                });
             }
 
             const edit = () => {
