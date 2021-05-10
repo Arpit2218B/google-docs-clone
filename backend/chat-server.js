@@ -9,16 +9,18 @@ const io = new Server(server, {
 });
 
 let initialData = '';
+let usersList = {};
 
 io.on('connection', (socket) => {
-    console.log(socket.handshake.query.username);
+    usersList[socket.id] = socket.handshake.query.username;
     console.log('New connection established');
-    io.emit('newConnection', socket.nsp.sockets.size);
+    io.emit('newConnection', usersList);
     socket.emit('initialData', initialData);
     
     socket.on('disconnect', () => {
         console.log('User disconnected');
-        io.emit('discon', socket.nsp.sockets.size);
+        delete usersList[socket.id]
+        io.emit('discon', usersList);
     });
 
     socket.on('edit', (data) => {
